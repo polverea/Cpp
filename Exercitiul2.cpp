@@ -1,3 +1,9 @@
+// Use inheritance to simulate the following construction of the triangle:
+// Equilateral :base class for Isosceles,
+// Isosceles: base class for Triangle
+// Write in each class the formula for perimeter and aria
+// Annotation: Equilateral has only one side, Isosceles has 2 sides (one inheritance from Equilateral) and Triangle has 3 sides (2 inheritance from Isosceles)
+
 #include <iostream>
 
 using namespace std;
