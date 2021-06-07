@@ -1,3 +1,6 @@
+//Write a class MyString which has only one private member: a char*. 
+//Write in this class a copy constructor and copy assignment operator, a move constructor and move assignment operator and a concatenate function.
+
 #include <iostream>
 
 using namespace std;
