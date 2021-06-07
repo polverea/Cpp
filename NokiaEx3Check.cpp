@@ -1,3 +1,5 @@
+//Write a variadic template function that return true if the value of every even parameter is lower than the value of the parameter on the next position.
+
 #include <iostream>
 
 using namespace std;
