@@ -1,3 +1,5 @@
+//Write a variadic template function that calculate the square parameter’s sum.
+
 #include<iostream>
 
 using namespace std;
