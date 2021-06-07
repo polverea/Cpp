@@ -1,3 +1,5 @@
+//Write a variadic template function that calculate the maximum of its parameter
+
 #include <iostream>
 
 using namespace std;
