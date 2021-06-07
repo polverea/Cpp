@@ -1,3 +1,6 @@
+// Use a abstract class Shape who has a write function which writes the perimeter and area. This abstract class has one member side. 
+//Derived from this class 3 objects: Triangle, Square and Hexagon who override the 2 abstract function from Shape: perimeter and aria.
+
 #include <iostream>
 
 using namespace std;
