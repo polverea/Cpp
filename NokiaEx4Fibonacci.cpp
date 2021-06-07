@@ -1,3 +1,4 @@
+//Write a Fibonacci function as constexpr and measure the time for fibonacci(40) as constexpr/non constexpr value. Do you see the difference in time execution ?
 #include <iostream>
 #include <chrono>
 
