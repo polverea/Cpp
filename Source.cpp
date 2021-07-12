@@ -1,231 +1,118 @@
-#include <iostream>
-#include <list>
-#include <iterator>
-
+#include<iostream>
+#include<memory>
 using namespace std;
-
-template<class InputIterator, class Student>
-InputIterator find(InputIterator first, InputIterator last, const Student& val);
-
-
-class Student {
-    string nume;
-    int an;
-    string* cursuri= new string[10];
-    int* note = new int[10];
-
+int size1;
+class Matrix
+{
+	int size;
+	shared_ptr<shared_ptr<int[]>[]> val;
 public:
-    bool operator == (const Student& s) const { return nume == s.nume && an == s.an && cursuri == s.cursuri && note == s.note; }
-    bool operator != (const Student& s) const { return !operator==(s); }
-    Student();
+	Matrix() //default constructor
+	{
+		cout << "Dimensiunea matricii este: ";
+		cin >> size;
+		if (size)
+			val=make_unique<shared_ptr<int[]>[]>(size);
+		else
+			val=nullptr;
 
-    Student(string nume, int an, string cursuri[10], int note[10])
-    {
-        this->nume = nume;
-        this->an = an;
-        for (int i = 0; i < 10; i++)
-            this->note[i] = note[i]; 
-        for (int i = 0; i < 10; i++)
-            this->cursuri[i] = cursuri[i];
-    }
-   
+		for (int i = 0; i < size; i++)
+		{
+			val[i] = shared_ptr<int[]>(new int[size]);
+			for (int j = 0; j < size; j++)
+			{
+				int k;
+				cin >> k;
+				val[i][j] = k;
+			}
+		}
+	}
+	Matrix(int size1) :size{ size1 }, val{make_unique<shared_ptr<int[]>[]>(size) }
+	{
+		for (int i = 0; i < size; i++)
+		{
+			val[i] = shared_ptr<int[]>(new int[size]);
+			for (int j = 0; j < size; j++)
+			{
+				int k;
+				cin >> k;
+				val[i][j] = k;
+			}
+		}
+	}
 
-    string getNume()
-    {
-        return nume;
-    }
+	Matrix(const Matrix& mat): size(mat.size), val(size ? make_unique<shared_ptr<int[]>[]>(size) : nullptr) //copy constructor
+	{
 
-    int getAn()
-    {
-        return an;
-    }
+		size = mat.size;
+		for (int i = 0; i < size; i++)
+		{ 
+			val[i] = shared_ptr<int[]>(new int[size]);
+			for (int j = 0; j < size; j++)
+			
+				val[i][j] = mat.val[i][j];
+		}
+	}
+	
+	Matrix& operator=(const Matrix& mat)
+	{
 
-    string* getCursuri()
-    {
-        static string c[10];
-        for (int i = 0; i < 10; i++)
-            c[i] = this->cursuri[i];
-        return c;
-    }
+		if (&mat != this)
+		{
+			for (int i = 0; i < size; i++)
+			{
+				val[i] = shared_ptr<int[]>(new int[size]);
+				for (int j = 0; j < size; j++)
+					val[i][j] = mat.val[i][j];
+			}
+		}
+		return *this;
+	}
+	Matrix operator+(const Matrix& mat)
+	{
+		for (int i = 0; i < size; i++)
+		{			
+			for (int j = 0; j < size; j++)
+			{
+				val[i][j] = val[i][j] + mat.val[i][j];
+		
+			}
+		}
+		return *this;
+	}
 
-    int* getNote()
-    {
-        static int n[10];
-        for (int i = 0; i < 10; i++)
-            n[i] = this->note[i];
-        return n;
-    }
+	~Matrix()
+	{
+		cout << "Destoryed Matrix" << endl;
+	}
 
-    double media() {
-        int suma = 0;
-        for (int i = 0; i < 10; i++)
-            suma += note[i];
-
-        return  suma / 10.0;;
-    }
+	void afisare() {
+		for (int i = 0; i < size; i++)
+		{
+			for (int j = 0; j < size; j++)
+				cout << val[i][j]<<" ";
+			cout << endl;
+		}
+		cout << endl;
+	}
 };
 
 
-void showlist(list <Student> g)
+int main()
 {
-    list <Student> ::iterator it;
-    for (it = g.begin(); it != g.end(); ++it)
-    {
-        string* ptr;
-        cout << "Nume: " << (*it).getNume() << endl << "An: " << (*it).getAn() << endl << "Cursuri: ";
-        ptr = (*it).getCursuri();
-        for (int i = 0; i < 10; i++)
-            cout << ptr[i] << " ";
-        int* ptr2;
-        cout << "\nNote: ";
-        ptr2 = (*it).getNote();
-        for (int i = 0; i < 10; i++)
-            cout << ptr2[i] << " ";
-        cout << endl << endl;
-    }
-}
+	
+	Matrix a;
+	Matrix b;
+	Matrix c(a);
 
-static bool sortByMedia(Student &s1, Student &s2)
-{
+	Matrix d = a;
 
-    return s1.media() > s2.media();
-}
+	Matrix e = a + b;
+	a.afisare();
+	b.afisare();
+	c.afisare();
+	d.afisare();
+	e.afisare();
 
-static bool sortByNume(Student& s1, Student& s2)
-{
-
-    return s1.getNume() < s2.getNume();
-}
-
-bool searchVal (Student& s)
-{
-    return s.media() > 8;
-}
-
-
-int main() {
-
-    int opt;
-    std::list<Student> lista;
-    list <Student> ::iterator it;
-    
-    string nume, cursuri2[10];
-    int note[10], an;
-    int note1[10] { 6,7,4,3,7,5,8,9,7,10 };
-    int note2[10]{ 4,4,4,3,7,5,8,2,3,4 };
-    int note3[10]{ 9,9,9,3,10,9,8,9,7,10 };
-    int note4[10]{ 8,7,4,9,4,8,8,10,7,4 };
-    int note5[10]{ 5,5,5,5,5,5,5,5,5,6 };
-    string cursuri[10] { "c1","c2","c3","c4","c5","c6","c7","c8","c9","c10" };
-    Student s1("Polverea",4,cursuri,note5);
-    Student s2("Popescu", 3, cursuri, note1);
-    Student s3("Rad", 3, cursuri, note5);
-    Student s4("Rup", 4, cursuri, note2);
-
-    do {
-        cout << "1. Creare lista\n";
-        cout << "2. Afisare lista\n";
-        cout << "3. Medie student\n";
-        cout << "4. Afisare studenti ordine descrescatoare\n";
-        cout << "5. Afisare studenti anul 3 cu media peste 8\n";
-        cout << "6. Inserare student dupa la k-lea student\n";
-        cout << "7. Eliminare studenti nepromovati\n";
-        cout << "8. Iesire\n";
-        cout << "Alege optiunea: ";
-        cin >> opt;
-
-        switch (opt)
-        {
-        case 1:
-            lista.push_back(s1);
-            lista.push_back(s2);
-            lista.push_back(s3);
-            lista.push_back(s4);
-            break;
-        case 2:
-            showlist(lista);
-
-            break;
-  
-        case 3:
-            for (it = lista.begin(); it != lista.end(); ++it)
-                cout << "Nume: " << (*it).getNume() << "\nMedia: " << (*it).media() << endl << endl;
-            break;
-        case 4:
-            lista.sort(sortByNume);
-            lista.sort(sortByMedia);
-
-            for (it = lista.begin(); it != lista.end(); ++it)
-                cout << "Nume: " << (*it).getNume() << "\nMedia: " << (*it).media() << "\nAn: " << (*it).getAn() << endl;
-            break;
-        case 5:
-        {
-            for (it = lista.begin(); it != lista.end(); ++it)
-            {
-                if (((*it).media() > 8) && (*it).getAn() == 3)
-                    cout << "Nume: " << (*it).getNume() << "\nMedia: " << (*it).media() << "\nAn: " << (*it).getAn() << endl;
-            }
-        }
-        break;
-
-        case 6:
-        {
-            cout << "\nInserare date student!";
-            cout << "\nNume: "; cin >> nume;
-            cout << "\nAn: "; cin >> an;
-            cout << "\nCursuri: ";
-            for (int i = 0; i < 10; i++)
-                cin >> cursuri2[i];
-            cout << "\nNote: ";
-            for (int i = 0; i < 10; i++)
-                cin >> note[i];
-            cout << "\nk=";
-            int k;
-            cin >> k;
-            Student st5(nume, an, cursuri2, note);
-            list <Student> ::iterator it = lista.begin();
-            int option;
-            if (k > lista.size())
-            {
-                cout << "\n1. Inserare la inceput!";
-                cout << "\n2. Inserare la sfarsit!";
-                cout << "\nAlege optiunea: ";
-                cin >> option;
-                if (option == 1)
-                {
-                    lista.insert(it, st5);
-                }
-                else if (option == 2)
-                {
-                    it = lista.end();
-                    lista.insert(it, st5);
-                }
-            }
-            else
-            {
-                advance(it, k);
-                lista.insert(it, st5);
-            }
-        }
-        break;
-        case 7:
-            for (it = lista.begin(); it != lista.end();)
-            {
-                if (it->media() < 5)
-                {
-                    list <Student> ::iterator pos;
-                    pos = lista.erase(it);
-                    it = pos;
-                }
-                else
-                    it++;
-            }
-                   break;
-        case 8: break;
-        default: cout << "Wrong input. Try again!\n";
-            break;
-        }
-    } while (opt);
-
-    return 0;
+	return 0;
 }
