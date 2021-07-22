@@ -1,0 +1,128 @@
+#include <iostream>
+#include <list>
+#include <map>
+#include <algorithm>
+#include <boost\optional.hpp>
+using namespace std;
+class MyValues {
+public:
+   
+    MyValues(string name, int serialNumber) { this->name = name; this->serialNumber = serialNumber; }
+    string name;
+    int serialNumber;
+    bool operator==(const string nume)const {
+        return name == nume;
+    }
+};
+
+
+
+class MyClass {
+public:
+ 
+    void add(MyValues obj)
+    {
+        numbers.push_back(obj);
+    }
+    void show()
+    {
+        list<MyValues>::iterator it;
+        for (it = numbers.begin(); it != numbers.end(); ++it)
+        {
+            cout << it->name << " ----> " << it->serialNumber << endl;
+        }
+    }
+    int cautareClasica(string nume)
+    {
+        list<MyValues>::iterator it;
+        for (it = numbers.begin(); it != numbers.end(); ++it)
+        {
+            if (it->name == nume)
+                return it->serialNumber;
+        }
+        return 0;
+    }
+
+    int cautareC11(string nume)
+    {
+        for (auto i : numbers)
+        {
+            if (i.name == nume)
+                return i.serialNumber;
+        }
+        return 0;
+    }
+
+    boost::optional<int> cautareFind(string nume)
+    {
+        list<MyValues>::iterator findIt = find(numbers.begin(), numbers.end(), nume);
+        if (findIt != numbers.end())
+            return boost::optional<int>(findIt->serialNumber);
+        else
+            return boost::optional<int>();
+    }
+   
+private:
+    list<MyValues> numbers;
+};
+
+int main()
+{
+    int opt;
+    MyClass obj1;
+    MyValues val1("Polverea", 1234), val2("Marian", 4567), val3("Silviu", 8876), val4("Mircea", 3321), val5("Sandu", 4388);
+    do {
+        cout << "1. Adaugare\n";
+        cout << "2. Afisare\n";
+        cout << "3. Cautare cu iteratori clasici\n";
+        cout << "4. Cautare cu c++11 range - based for loop\n";
+        cout << "5. Cautare cu find\n";
+        cout << "Alege optiunea: ";
+        cin >> opt;
+
+        switch (opt)
+        {
+        case 1: obj1.add(val1); obj1.add(val2); obj1.add(val3); obj1.add(val4); obj1.add(val5);
+            break;
+        case 2:  obj1.show();
+            break;
+        case 3:
+        {
+            string nume;
+            cout << "Introduceti numele persoanei pentru a afla serial number-ul acesteia: "; cin >> nume;
+            if (obj1.cautareClasica(nume) != 0)
+                cout << "Persoana cu numele " << nume << " are serialNumber-ul " << obj1.cautareClasica(nume) << endl;
+            else
+                cout << "Persoana cu numele " << nume << " nu se afla in lista";
+            break;
+        }
+        case 4:
+        {
+            string nume2;
+            cout << "Introduceti numele persoanei pentru a afla serial number-ul acesteia: "; cin >> nume2;
+            if (obj1.cautareC11(nume2) != 0)
+                cout << "Persoana cu numele " << nume2 << " are serialNumber-ul " << obj1.cautareC11(nume2) << endl;
+            else
+                cout << "Persoana cu numele " << nume2 << " nu se afla in lista";
+            break;
+        }
+        case 5:
+            string nume2;
+            cout << "Introduceti numele persoanei pentru a afla serial number-ul acesteia: "; cin >> nume2;
+            boost::optional<int> op = obj1.cautareFind(nume2);
+            if (op)
+                cout << "Persoana cu numele " << nume2 << " are serialNumber-ul " << op.get() << endl;
+            else
+                cout << "Persoana cu numele " << nume2 << " nu se afla in lista\n";
+            op.reset();
+            break;
+        }
+    } while (opt);
+
+
+   
+    return 0;
+}
+
+
+
