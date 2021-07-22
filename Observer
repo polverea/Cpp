@@ -1,0 +1,129 @@
+#include <iostream>
+#include <list>
+#include <string>
+
+using namespace std;
+
+class IObserver {
+public:
+	virtual ~IObserver() {};
+	virtual void Update(string& message_from_subject) = 0;
+};
+
+class ISubject {
+public:
+	virtual ~ISubject() {}
+	virtual void Attach(IObserver* observer) = 0;
+	virtual void Detach(IObserver* observer) = 0;
+	virtual void Notify() = 0;
+};
+
+class Subject :public ISubject {
+	list<IObserver*> list_observer;
+	string message;
+public:
+	virtual ~Subject() {
+		cout << "I was the Subject" << endl;
+	}
+
+	void Attach(IObserver* observer) {
+		list_observer.push_back(observer);
+	}
+
+	void Detach(IObserver* observer)
+	{
+		list_observer.remove(observer);
+	}
+
+	void Notify() {
+		list<IObserver*>::iterator it = list_observer.begin();
+		HowManyObserver();
+		while (it != list_observer.end()) {
+			(*it)->Update(message);
+			++it;
+		}
+	}
+
+	void CreateMessage(string message = "Empty")
+	{
+		this->message = message;
+		Notify();
+	}
+
+	void HowManyObserver() {
+		cout << "there are " << list_observer.size() << " observers in the list" << endl;
+	}
+
+	void SomeBusinessLogic() {
+		this->message = "Change message";
+		Notify();
+		cout << "I m about to do some thing important" << endl;
+	}
+};
+
+class Observer : public IObserver {
+	string message_from_subject;
+	Subject& subject_;
+	static int static_number;
+	int number;
+public:
+	Observer(Subject& subject) : subject_(subject) {
+		this->subject_.Attach(this);
+		cout << "Hi, i m observer " << ++Observer::static_number << endl;
+		this->number = Observer::static_number;
+	}
+	virtual ~Observer() {
+		cout << "Goodbye i was the observer " << this->number << endl;
+	}
+
+	void Update(string& message_from_subj) {
+		message_from_subject = message_from_subj;
+		PrintInfo();
+	}
+	void RemoveMeFromList() {
+		subject_.Detach(this);
+		cout << "Observer " << number << " removed from list!" << endl;
+	}
+	void PrintInfo()
+	{
+		cout << " Observer " << this->number << ": a new message is available --> " << this->message_from_subject << endl;
+	}
+};
+int Observer::static_number = 0;
+
+void Client() {
+	Subject* subject = new Subject;
+	Observer* obs1 = new Observer(*subject);
+	Observer* obs2 = new Observer(*subject);
+	Observer* obs3 = new Observer(*subject);
+	Observer* obs4;
+	Observer* obs5;
+
+	subject->CreateMessage("Salut! :D");
+	obs3->RemoveMeFromList();
+
+	subject->CreateMessage("Numele meu este Marius!");
+	obs4 = new Observer(*subject);
+	
+	obs2->RemoveMeFromList();
+	obs5 = new Observer(*subject);
+
+	subject->CreateMessage("Nokia!");
+	obs5->RemoveMeFromList();
+
+	obs4->RemoveMeFromList();
+	obs1->RemoveMeFromList();
+
+	delete obs5;
+	delete obs4;
+	delete obs3;
+	delete obs2;
+	delete obs1;
+	delete subject;
+}
+
+int main()
+{
+	Client();
+	return 0;
+}
