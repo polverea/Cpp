@@ -1,0 +1,109 @@
+#include<iostream>
+
+using namespace std;
+
+
+template<typename X>
+class stack {
+	X* val;
+	int top;
+	int capacity;
+
+public:
+	stack(int capacity) {
+		val = new X[capacity];
+		this->capacity = capacity;
+		top = -1;
+	}
+
+	void push(X);
+	X pop();
+	X peek();
+	X accesElement(unsigned int);
+	bool isEmpty();
+	bool isFull();
+
+	~stack() {
+		delete[] val;
+	}
+};
+
+
+
+template<typename X>
+void stack<X>::push(X x) {
+	if (isFull())
+	{
+		cout << "Overflow\n";
+		exit(EXIT_FAILURE);
+	}
+	else
+	{
+		cout << "Inserting " << x << endl;
+		val[++top] = x;
+	}
+}
+
+template<typename X>
+X stack<X>::pop() {
+	if (isEmpty())
+	{
+		cout << "Stack is empty\n";
+	}
+	else
+	{
+		return val[top--];
+	}
+}
+
+template<typename X>
+bool stack<X>::isEmpty() {
+	return (top == -1) ? true : false;
+}
+
+template<typename X>
+bool stack<X>::isFull()
+{
+	return (top == capacity-1) ? true : false;
+}
+
+template<typename X>
+X stack<X>::peek()
+{
+	if(!isEmpty())
+		return val[top];
+	else {
+		exit(EXIT_FAILURE);
+	}
+}
+
+template<typename X>
+X stack<X>::accesElement(unsigned int i)
+{
+	if (i >= capacity)
+	{
+		cout << "This element doesn't exist";
+		exit(EXIT_FAILURE);
+	}
+	else
+		return val[i];
+}
+
+int main()
+{
+	stack<int> s1(20);
+	stack<string> s2(4);
+	s1.push(2);
+	s1.push(10);
+	s1.pop();
+	cout << "peek: " << s1.peek() << endl;
+	
+	s2.push("Marius");
+	s2.push("Polverea");
+	s2.push("Marian");
+	s2.push("Alina");
+	cout << "element---->" << s2.accesElement(7) << endl;
+	cout << "peek: " << s2.peek() << endl;
+
+	return 0;
+}
