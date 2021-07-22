@@ -1,0 +1,42 @@
+#include<iostream>
+
+using namespace std;
+
+class Singleton {
+	static Singleton* instance;
+	int attribute1;
+	int attribute2;
+	Singleton() : attribute1(10), attribute2(20){}
+public:
+	static Singleton* getInstance()
+	{
+		if (instance == NULL)
+			instance = new Singleton();
+		return instance;
+	}
+	void setAttribute1(int attribute1) { this->attribute1 = attribute1; }
+	void setAttribute2(int attribute2) { this->attribute2 = attribute2; }
+
+	int getAttribute1() { return attribute1; }
+	int getAttribute2() { return attribute2; }
+
+	void show() {
+		cout << "Attribute 1: " << attribute1 << endl << "Attribute 2: " << attribute2 << endl;
+	}
+};
+
+Singleton* Singleton::instance = NULL;
+
+void function() {
+	Singleton* s = Singleton::getInstance();
+	s->show();
+}
+int main()
+{
+	Singleton* s = Singleton::getInstance();
+	s->show();
+	s->setAttribute1(199);
+	function(); 
+	s->show();
+	return 0;
+}
