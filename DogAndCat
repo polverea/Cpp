@@ -1,0 +1,59 @@
+#include<iostream>
+#include<vector>
+using namespace std;
+
+class Animals {
+	string color;
+	int age;
+public:
+	Animals(string color, int age) { this->color = color; this->age = age; }
+	virtual void afisare();
+	string getColor() { return this->color; };
+	int getAge() { return this->age; }
+	virtual ~Animals() { cout << "Destructor "; } // avoid resource leaks
+};
+
+void Animals::afisare() {
+	cout << "Culoarea este: " << color << ", varsta este: " << age;
+}
+
+class Dog : public Animals
+{
+	int speed;
+public:
+	Dog(string color, int age, int speed) :Animals(color, age) { this->speed = speed; }
+	virtual void afisare();
+	int getSpeed() { return this->speed; }
+};
+void Dog::afisare() {
+	Animals::afisare();
+	cout << ", viteza cainelui este de " << speed << " km/h" << endl;
+}
+
+class Cat : public Animals
+{
+	int weight;
+public:
+	Cat(string color, int age, int weight) :Animals(color, age) { this->weight = weight; }
+	virtual void afisare();
+	int getWeight() { return this->weight; }
+};
+void Cat::afisare() {
+	Animals::afisare();
+	cout << ", greutatea pisicii este de " << weight << " kg" << endl;
+}
+
+int main()
+{
+	vector<shared_ptr<Animals>> v;
+	vector<shared_ptr<Animals>>::iterator it;
+	shared_ptr<Dog> d1=make_shared<Dog>("black", 2, 30);
+	shared_ptr<Cat> c1=make_shared<Cat>("white", 2, 4);
+	v.push_back(d1);
+	v.push_back(c1);
+	for (it = v.begin(); it < v.end(); ++it)
+	{
+		(*it)->afisare();
+	}
+	return 0;
+}
